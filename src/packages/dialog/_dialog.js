@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import settings from './dialog.vue';
 
+// 基于 组件实例 创建构造类
 let DialogConstructor = Vue.extend(settings);
 
 let inst;
@@ -14,10 +15,11 @@ let Dialog = function(options) {
     inst = new DialogConstructor({
         propsData: options
     });
-
+    // $mount 返回vm 
     inst.vm = inst.$mount();
 
     let dialogDom = document.querySelector('#' + options.id);
+    // 相同id dom 的替换或者插入
     if (options.id && dialogDom) {
         dialogDom.parentNode.replaceChild(inst.$el, dialogDom);
     } else {

@@ -2,6 +2,7 @@
   <div class="nut-infiniteloading" ref="scroller" @touchstart="touchStartHandle($event)" @touchmove="touchMoveHandle($event)">
     <slot></slot>
     <div class="load-more">
+      <!-- 模版的结构非常清晰 -->
       <div class="bottom-tips" v-if="isShowBottomTips">
         <template v-if="isLoading">
           <template v-if="!slotLoading"> <i class="loading-hint"></i><span class="loading-txt">加载中...</span> </template>
@@ -28,10 +29,12 @@ export default {
       type: Boolean,
       default: false
     },
+    // 触发加载的滑动距离
     threshold: {
       type: Number,
       default: 200
     },
+    // 滑动时间的绑定节点
     useWindow: {
       type: Boolean,
       default: true
@@ -55,6 +58,7 @@ export default {
     scrollChange: {
       type: Function
     },
+    // 自定义绑定节点
     containerId: {
       type: String,
       default: ''
@@ -73,6 +77,7 @@ export default {
   },
 
   mounted: function() {
+    // 挂载滚动元素的差异
     const parentElement = this.getParentElement(this.$el);
     let scrollEl = window;
     if (this.useWindow === false) {
@@ -80,7 +85,7 @@ export default {
     }
     this.scrollEl = scrollEl;
     this.scrollListener();
-
+    // this.$slots 获取 组件slot
     this.slotUnloadMore = this.$slots.unloadMore ? true : false;
     this.slotLoading = this.$slots.loading ? true : false;
   },
@@ -100,17 +105,19 @@ export default {
       this.diffX = endX - this.startX;
       this.diffY = endY - this.startY;
     },
+    // 获取默认｜指定父级元素
     getParentElement(el) {
       if (this.containerId) {
         return document.querySelector(`#${this.containerId}`);
       }
       return el && el.parentNode;
     },
+    // 绑定滚动事件
     scrollListener() {
       this.scrollEl.addEventListener('scroll', this.handleScroll, this.useCapture);
       window.addEventListener('resize', this.handleScroll, this.useCapture);
     },
-
+    // 降级的定时调用
     requestAniFrame() {
       return (
         window.requestAnimationFrame ||
@@ -121,7 +128,7 @@ export default {
         }
       );
     },
-
+    // 滚动事件的实际执行肯定是需要 优化执行
     handleScroll() {
       this.requestAniFrame()(() => {
         if (!this.isScrollAtBottom() || !this.hasMore || this.isLoading || !this.isShowMod) {
@@ -131,7 +138,10 @@ export default {
         }
       });
     },
-
+    /* 
+      HTMLElement.offsetTop 为只读属性，它返回当前元素相对于其 offsetParent 元素的顶部内边距的距离。
+      这里递归调用就会一直算到 html
+    */
     calculateTopPosition(el) {
       if (!el) {
         return 0;
@@ -139,12 +149,14 @@ export default {
       return el.offsetTop + this.calculateTopPosition(el.offsetParent);
     },
 
+    // 获取 Y 方向卷去的距离
     getWindowScrollTop() {
       return window.pageYOffset !== undefined
         ? window.pageYOffset
         : (document.documentElement || document.body.parentNode || document.body).scrollTop;
     },
-
+    
+    // 判断是否滚动到底部，核心计算逻辑
     isScrollAtBottom() {
       let offsetDistance;
 
