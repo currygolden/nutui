@@ -26,7 +26,7 @@
         <div class="region-tab">
           <div
             class="tab-item"
-            :class="[index == tabIndex ? 'active' : '']"
+            :class="[index == tabIndex ? 'active' : '', 'aaa']"
             v-for="(item, key, index) in selectedRegion"
             :key="index"
             :ref="'tab-item-' + key"

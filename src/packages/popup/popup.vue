@@ -1,5 +1,7 @@
 <template>
+  <!-- 初始化动画类型和绑定钩子函数 -->
   <transition :name="transitionName" @after-enter="$emit('opened')" @after-leave="$emit('closed')">
+    <!-- 容器区 -->
     <div
       ref="popupBox"
       v-show="value"
@@ -9,6 +11,7 @@
       @click="$emit('click', this)"
     >
       <slot v-if="showSlot"></slot>
+      <!-- 图标 -->
       <icon
         v-if="closeable"
         @click.native="$emit('input', false)"

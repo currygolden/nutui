@@ -149,15 +149,16 @@ export default {
       return el.offsetTop + this.calculateTopPosition(el.offsetParent);
     },
 
-    // 获取 Y 方向卷去的距离
+    // 获取html在 Y 方向卷去的距离
     getWindowScrollTop() {
       return window.pageYOffset !== undefined
         ? window.pageYOffset
         : (document.documentElement || document.body.parentNode || document.body).scrollTop;
     },
-    
+
     // 判断是否滚动到底部，核心计算逻辑
     isScrollAtBottom() {
+      // 除掉scroll 和 client高度剩下的高度
       let offsetDistance;
 
       let resScrollTop = 0;

@@ -5,6 +5,7 @@ let ToastConstructor = Vue.extend(settings);
 let instance;
 let instanceArr = [];
 let defaultOptionsMap = {};
+// toast的各种属性
 const defaultOptions = {
   msg: '',
   visible: false,
@@ -39,6 +40,7 @@ function _showToast() {
 }
 
 function _getInstance(obj) {
+  // api 调用时处理属性,很多基于对象配置的参数场景都有这个合并
   let opt = {
     id: new Date().getTime(),
     ...currentOptions,
@@ -46,15 +48,17 @@ function _getInstance(obj) {
     ...obj
   };
 
-  //有相同id者共用一个实例，否则新增实例
+  //有相同id者共用一个实例，否则新增实例，区别于单例模式
   if (opt['id'] && instanceArr[opt['id']]) {
     instance = instanceArr[opt['id']];
     instance.hide(true);
     instance = Object.assign(instance, opt);
   } else {
+    // vue实例的构造函数初始化可以类似这种调用
     instance = new ToastConstructor({
       data: Object.assign(opt, obj)
     });
+    // 存储实例
     opt['id'] && (instanceArr[opt['id']] = instance);
   }
 
@@ -92,6 +96,7 @@ let Toast = {
     obj.duration = obj.duration || 0; //loading类型默认不自动关闭
     return _getInstance(obj);
   },
+  // 给特定的类型自定义属性
   setDefaultOptions(type, options) {
     if (typeof type === 'string') {
       defaultOptionsMap[type] = options;
@@ -99,6 +104,7 @@ let Toast = {
       Object.assign(currentOptions, type);
     }
   },
+  // 默认属性重置
   resetDefaultOptions(type) {
     if (typeof type === 'string') {
       defaultOptionsMap[type] = null;

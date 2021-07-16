@@ -47,6 +47,7 @@ export default {
       type: Boolean,
       default: false
     },
+    // 支持预览
     isPreview: {
       type: Boolean,
       default: false
@@ -113,6 +114,7 @@ export default {
     };
   },
   methods: {
+    // 定义配置参数
     createUploaderOpts() {
       const _this = this;
       return {
@@ -147,6 +149,7 @@ export default {
         }
       };
     },
+    // 防止多次点击
     preventMoreClick() {
       setTimeout(() => {
         this.newdisabled = true;
@@ -164,16 +167,20 @@ export default {
       }
       const formData = new FormData();
       const opt = this.createUploaderOpts();
+      // 触发点击的元素
       opt.$el = tar;
+      // 获取预览元素
       if (this.isPreview) {
         opt.previewData = tar.files;
       }
       let len = this.multiple ? tar.files.length : 1;
+      // 上传格式 blob | file
       if (fileBlob) {
         formData.append(tar.name, fileBlob);
       } else {
         formData.append(tar.name, tar.files[0]);
       }
+      // formData 额外参数
       for (const key of Object.keys(this.attach)) {
         formData.append(key, this.attach[key]);
       }
@@ -191,6 +198,7 @@ export default {
       new Uploader(opt);
       this.$emit('afterChange', tar, $event);
     },
+    // upload的定义支持传自定义参数
     async upload($event) {
       if (typeof this.beforeUpload === 'function') {
         const promise = new Promise((reslove, reject) => {

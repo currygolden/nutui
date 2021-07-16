@@ -26,11 +26,13 @@
   </div>
 </template>
 <script>
+// 固定值的编码习惯
 const VERTICAL = 'vertical';
 const HORIZONTAL = 'horizontal';
 export default {
   name: 'nut-swiper',
   props: {
+    // 方向限定
     direction: {
       type: String,
       default: HORIZONTAL,
@@ -44,18 +46,22 @@ export default {
       type: Boolean,
       default: false
     },
+    // 循环展示
     loop: {
       type: Boolean,
       default: false
     },
+    // 动画速度
     speed: {
       type: Number,
       default: 500
     },
+    // 支持拖拽
     canDragging: {
       type: Boolean,
       default: true
     },
+    // 轮播间隔时间
     autoPlay: {
       type: Number,
       default: 0
@@ -106,7 +112,7 @@ export default {
       translateX: 0,
       translateY: 0,
       startTranslate: 0,
-      slideEls: [],
+      slideEls: [], // 所有的滑动元素
       translateOffset: 0, //当前偏移初始位置距离
       transitionDuration: 0, //切换动画时间
       startPos: null,
@@ -121,7 +127,7 @@ export default {
     };
   },
   methods: {
-    //下一张
+    //下一张,控制跳转页数
     next(turnPageCount = 1) {
       let page = this.currentPage;
       if (page + turnPageCount < this.slideEls.length || this.isLoop) {
@@ -140,6 +146,7 @@ export default {
       }
     },
     setPage(page, isHasAnimation, type) {
+      // 这里实际有循环 k*n
       if (page === 0) {
         this.currentPage = this.slideEls.length;
       } else if (page > this.slideEls.length) {
@@ -181,6 +188,7 @@ export default {
       this.$nextTick(() => {
         this.domTimer = setTimeout(() => {
           if (pageSize != undefined) this.currentPage = pageSize;
+          // 获取滑动子元素的方法奇怪
           this.swiperWrap = this.$el.querySelector('.nut-swiper-wrap');
           this.slideEls = [...this.swiperWrap.children];
           if (this.slideEls.length === 0) return;
@@ -195,6 +203,7 @@ export default {
         }, 0);
       });
     },
+    // 给当前展示页添加选中样式
     _slideClassHandle() {
       let selectedSlide = this.$el.querySelector('.nut-swiper-slide-selected');
       selectedSlide && selectedSlide.classList.remove('nut-swiper-slide-selected');
@@ -202,12 +211,15 @@ export default {
       this.lastPage = this.currentPage;
     },
     _getSlideDistance(el) {
+      // 返回元素的样式对象
       let styleArr = getComputedStyle(el);
+      // 对象属性的读取不区分驼峰
       let marginTop = styleArr['marginTop'].replace('px', '') - 0;
       let marginBottom = styleArr['marginBottom'].replace('px', '') - 0;
       let marginRight = styleArr['marginRight'].replace('px', '') - 0;
       let marginLeft = styleArr['marginLeft'].replace('px', '') - 0;
       if (this.isHorizontal()) {
+        // 本身的宽高+margin
         this.oneSlideTranslate = marginRight + marginLeft + el['offsetWidth'];
       } else {
         this.oneSlideTranslate = marginTop + marginBottom + el['offsetHeight'];
@@ -313,6 +325,7 @@ export default {
     _isPageChanged() {
       return this.lastPage !== this.currentPage;
     },
+    // 设置 x | Y 方向的偏移距离
     _setTranslate(value) {
       let translateName = this.isHorizontal() ? 'translateX' : 'translateY';
       this[translateName] = value;
@@ -321,6 +334,7 @@ export default {
       let translateName = this.isHorizontal() ? 'translateX' : 'translateY';
       return this[translateName];
     },
+    // 设置页数需要滑动的距离
     _getTranslateOfPage(page) {
       if (page === 0) return 0;
       let propName = this.isHorizontal() ? 'offsetWidth' : 'offsetHeight';
@@ -344,6 +358,7 @@ export default {
       swiperWrapEl.appendChild(duplicateFirstChild);
       this.translateOffset = -this.oneSlideTranslate;
     },
+    // 定义播放定时器
     _createAutoPlay() {
       clearInterval(this.timer);
       this.timer = setInterval(() => {
@@ -362,10 +377,12 @@ export default {
       );
     },
     _imgLazyLoad(type) {
+      // 节流兼容
       let requestAniFrame = this._requestAniFrame();
       let imgLazyLoadEl;
       requestAniFrame(() => {
         imgLazyLoadEl = this.swiperWrap.querySelectorAll('.nut-img-lazyload');
+        // 在滑动元素内部
         if (type == 1) {
           imgLazyLoadEl = this.slideEls[this.currentPage - 1].querySelectorAll('.nut-img-lazyload');
         }
@@ -389,6 +406,7 @@ export default {
         });
       });
     },
+    // 懒加载判断是否出现到视窗
     _checkInView(imgItem) {
       let imgRect = imgItem.getBoundingClientRect();
       let swiperRect = this.$el.getBoundingClientRect();

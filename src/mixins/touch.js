@@ -1,3 +1,4 @@
+// 移动端touch 基础逻辑
 import Vue from 'vue';
 
 const MIN_DISTANCE = 10;
@@ -14,6 +15,7 @@ function getDirection(x, y) {
   return '';
 }
 
+// 获取TouchMixin的构造类
 const TouchMixin = Vue.extend({
   data() {
     return { direction: '' };

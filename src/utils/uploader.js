@@ -1,5 +1,6 @@
 class IdaUploader {
   constructor(settings) {
+    // 对象的配置还是最灵活的
     this.options = {
       url: '',
       formData: null,
@@ -21,17 +22,21 @@ class IdaUploader {
       typeError: null,
       limitError: null
     };
+    // 实例化类的属性合并
     Object.assign(this.options, settings);
     this[this.options.isPreview ? 'preview' : 'uploader']();
   }
+  // 调用函数
   triggerFunc(func) {
     if (typeof func === 'function') {
+      // 返回绑定对象的函数
       return func.bind(this);
     } else {
       console.warn(func + 'is not a function!');
       return function() {};
     }
   }
+  // 复用的方式
   showMsg(msg) {
     if (typeof this.options.showMsgFn == 'function') {
       this.options.showMsgFn(msg);
@@ -39,7 +44,9 @@ class IdaUploader {
       console.log(msg);
     }
   }
+  // 文件校验
   check(file) {
+    // 多文件校验
     if (Array.isArray(file)) {
       for (let key in file) {
         if (this.options.maxSize && file[key].size > this.options.maxSize) {
@@ -63,6 +70,7 @@ class IdaUploader {
     }
     return true;
   }
+  // 文件预览
   preview() {
     const file = Array.from(this.options.previewData);
     if (!this.check(file)) return;
@@ -89,6 +97,7 @@ class IdaUploader {
       this.triggerFunc.call(this.options, this.options.onPreview)(out);
     });
   }
+  // 原生文件上传
   uploader() {
     const xhr = new XMLHttpRequest();
     let options = this.options;
@@ -102,6 +111,7 @@ class IdaUploader {
         },
         false
       );
+      // 上传状态处理
       xhr.onreadystatechange = e => {
         if (xhr.readyState === 4) {
           if (xhr.status === options.xhrState) {

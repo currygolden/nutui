@@ -82,6 +82,7 @@ export default {
       this.scrollEl.removeEventListener('scroll', this.scrollListener, false);
       this.scrollEl.removeEventListener('resize', this.scrollListener, false);
     },
+    // 兼容
     requestAniFrame() {
       return (
         window.requestAnimationFrame ||
@@ -92,6 +93,7 @@ export default {
         }
       );
     },
+    // 初始化节流函数
     initCancelAniFrame() {
       let vendors = ['webkit', 'moz'];
       for (let x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
@@ -99,12 +101,14 @@ export default {
       }
     },
     init() {
+      // 确定滚动对象
       if (this.elId && document.getElementById(this.elId)) {
         this.scrollEl = document.getElementById(this.elId);
       }
       this.addEventListener();
       this.initCancelAniFrame();
     },
+    // 滚动逻辑，涉及常见高度处理
     scrollListener() {
       this.scrollTop = this.scrollEl.pageYOffset !== undefined ? this.scrollEl.pageYOffset : this.scrollEl.scrollTop;
       this.backTop = this.scrollTop >= this.distance;
@@ -114,6 +118,7 @@ export default {
       this.isAnimation && this.duration > 0 ? this.scrollAnimation() : this.scroll();
       this.$emit('click');
     },
+    // 滚动的优化算法
     scrollAnimation() {
       const self = this;
       var cid = self.requestAniFrame()(function fn() {
@@ -126,6 +131,7 @@ export default {
         }
       });
     },
+    // 直接处理滚动距离
     scroll(y = 0) {
       if (this.scrollEl === window) {
         window.scrollTo(0, y);

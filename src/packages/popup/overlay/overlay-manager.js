@@ -4,15 +4,16 @@ import overlayComponent from './overlay.vue';
 let modalStack = [];
 let _zIndex = 2000;
 let overlay;
+// 其实可以写成类｜class
 const overlayManager = {
   lockCount: 0,
-
+  // 属性的存取操作
   get topStack() {
     return modalStack[modalStack.length - 1];
   },
   getZIndex(id) {
     if (!id) return ++_zIndex;
-    const overlay = modalStack.find((res) => {
+    const overlay = modalStack.find(res => {
       return res.config.id === id;
     });
     if (overlay) {
@@ -27,8 +28,8 @@ const overlayManager = {
     if (!overlay) {
       overlay = mount(overlayComponent, {
         nativeOn: {
-          click: clickHandle,
-        },
+          click: clickHandle
+        }
       });
     }
 
@@ -38,7 +39,7 @@ const overlayManager = {
       el && el.parentNode && el.parentNode.nodeType !== 11 ? el.parentNode.appendChild(overlay.$el) : document.body.appendChild(overlay.$el);
 
       Object.assign(overlay, config, {
-        value: true,
+        value: true
       });
     } else {
       overlay.value = false;
@@ -56,8 +57,8 @@ const overlayManager = {
         zIndex,
         duration,
         overlayClass,
-        overlayStyle,
-      },
+        overlayStyle
+      }
     });
 
     overlayManager.updateOverlay();
@@ -79,46 +80,46 @@ const overlayManager = {
         modalStack.pop();
         overlayManager.updateOverlay();
       } else {
-        modalStack = modalStack.filter((item) => item.vm !== vm);
+        modalStack = modalStack.filter(item => item.vm !== vm);
       }
     }
-  },
+  }
 };
 
 const overlayProps = {
   value: {
     type: Boolean,
-    default: false,
+    default: false
   },
   overlay: {
     type: Boolean,
-    default: true,
+    default: true
   },
   lockScroll: {
     type: Boolean,
-    default: true,
+    default: true
   },
   duration: {
     type: Number,
-    default: 0.3,
+    default: 0.3
   },
   closeOnClickOverlay: {
     type: Boolean,
-    default: true,
+    default: true
   },
   overlayClass: {
     type: String,
-    default: '',
+    default: ''
   },
   overlayStyle: {
     type: Object,
-    default: function () {
+    default: function() {
       return null;
-    },
+    }
   },
   zIndex: {
-    type: Number,
-  },
+    type: Number
+  }
 };
 
 function mount(Component, data) {
@@ -127,9 +128,9 @@ function mount(Component, data) {
     render(h) {
       return h(Component, {
         props: this.$props,
-        ...data,
+        ...data
       });
-    },
+    }
   }).$mount();
   return instance;
 }
@@ -137,7 +138,7 @@ function mount(Component, data) {
 function getProps() {
   if (!this) return {};
   let obj = {};
-  Object.keys(overlayProps).forEach((res) => {
+  Object.keys(overlayProps).forEach(res => {
     obj[res] = this[res];
   });
   return obj;
